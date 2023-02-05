@@ -1,5 +1,5 @@
-from tensorflow.keras.preprocessing import img_to_array
-
+# from tensorflow.keras.preprocessing import img_to_array
+from tensorflow.keras.utils import img_to_array
 
 class ImageToArrayPreprocessor:
     def __init__(self, dataFormat=None):

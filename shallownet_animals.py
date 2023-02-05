@@ -4,7 +4,9 @@ from sklearn.metrics import classification_report
 from pyimagesearch.preprocessing import ImageToArrayPreprocessor, SimplePreprocessor
 from pyimagesearch.datasets import SimpleDatasetLoader
 from pyimagesearch.nn.conv import ShallowNet
-from tensorflow.python.keras.optimizers.gradient_descent_v2 import SGD
+import tensorflow as tf
+# from tensorflow.python.keras.optimizers.gradient_descent_v2 import SGD
+from tensorflow.keras.optimizers import SGD
 from imutils import paths
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,11 +14,12 @@ import argparse
 
 
 ap = argparse.ArgumentParser()
-ap.add_argument('-d', '--dataset_path', required=True, help="path to input images")
-args = vars(ap)
+ap.add_argument('-d', '--dataset', required=True, help="path to input images")
+args = vars(ap.parse_args())
 
 print("[INFO] loading images...")
-imagePaths = list(paths.list_images(args["dataset_path"]))
+imagePaths = list(paths.list_images(args["dataset"]))
+# print(imagePaths)
 
 sp = SimplePreprocessor(32, 32)
 iap = ImageToArrayPreprocessor()
@@ -25,19 +28,20 @@ sdl = SimpleDatasetLoader(preprocessors=[sp, iap])
 (data, labels) = sdl.load(imagePaths, verbose=500)
 data = data.astype("float") / 255.0
 
-(trainX, trainY, testX, testY) = train_test_split(data, labels, test_size=0.25, random_state=42)
+(trainX, testX, trainY, testY) = train_test_split(data, labels, test_size=0.25, random_state=42)
 
 trainY = LabelBinarizer().fit_transform(trainY)
-testX = LabelBinarizer().fit_transform(testX)
+testY = LabelBinarizer().fit_transform(testY)
 
 print("[INFO] compiling model...")
-opt = SGD(lr=0.005)
+# opt = SGD(learning_rate=0.005)
+# opt = tf.keras.optimizers.SGD(learning_rate=0.005)
 model = ShallowNet.build(width=32,
                          height=32,
                          depth=3,
                          classes=3)
 model.compile(loss="categorical_crossentropy",
-              optimizer=opt)
+              optimizer="SGD")
 
 print("[INFO] training network...")
 H = model.fit(trainX,

@@ -41,7 +41,7 @@ model = ShallowNet.build(width=32,
                          depth=3,
                          classes=3)
 model.compile(loss="categorical_crossentropy",
-              optimizer="SGD")
+              optimizer="SGD", metrics=["accuracy"])
 
 print("[INFO] training network...")
 H = model.fit(trainX,
@@ -55,12 +55,13 @@ print("[INFO] evaluating network")
 predictions = model.predict(testX, batch_size=32)
 print(classification_report(testY.argmax(axis=1), predictions.argmax(axis=1), target_names=["cat", "dog", "panda"]))
 
+# print(H.history.keys())
 plt.style.use("ggplot")
 plt.figure()
-plt.plot(np.arange(0, 100), H.history["loss"], labe="train_loss")
-plt.plot(np.arange(0, 100), H.history["val_loss"], labe="val_loss")
-plt.plot(np.arange(0, 100), H.history["accuracy"], labe="train_acc")
-plt.plot(np.arange(0, 100), H.history["val_acc"], labe="val_acc")
+plt.plot(np.arange(0, 100), H.history["loss"], label="train_loss")
+plt.plot(np.arange(0, 100), H.history["val_loss"], label="val_loss")
+plt.plot(np.arange(0, 100), H.history["accuracy"], label="train_acc")
+plt.plot(np.arange(0, 100), H.history["val_accuracy"], label="val_accuracy")
 plt.title("training loss and accuracy")
 plt.xlabel("epochs")
 plt.ylabel("loss/accuracy")
